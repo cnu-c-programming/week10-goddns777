@@ -2,88 +2,94 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Student {
-    char name[64];
+struct Node {
+    char name[100];
     int score;
-    struct Student *next;
+    struct Node* next;
 };
 
-struct Student *head = NULL;
+struct Node* head = NULL;
 
-void add(const char *name, int score) {
-    struct Student *node = (struct Student *)malloc(sizeof(struct Student));
-    strcpy(node->name, name);
-    node->score = score;
-    node->next = NULL;
+void add(char* name, int score) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    strcpy(newNode->name, name);
+    newNode->score = score;
+    newNode->next = NULL;
 
     if (head == NULL) {
-        head = node;
+        head = newNode;
     } else {
-        struct Student *cur = head;
-        while (cur->next != NULL) {
-            cur = cur->next;
+        struct Node* curr = head;
+        while (curr->next != NULL) {
+            curr = curr->next;
         }
-        cur->next = node;
+        curr->next = newNode;
     }
 }
 
-void delete(const char *name) {
-    struct Student *cur = head;
-    struct Student *prev = NULL;
+void delete_node(char* name) {
+    if (head == NULL) return;
 
-    while (cur != NULL) {
-        if (strcmp(cur->name, name) == 0) {
-            if (prev == NULL) {
-                head = cur->next;
-            } 
-            else {
-                prev->next = cur->next;
-            }
-            free(cur);
-            return;
-        }
-        prev = cur;
-        cur = cur->next;
+    if (strcmp(head->name, name) == 0) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+        return;
+    }
+
+    struct Node* curr = head;
+    while (curr->next != NULL && strcmp(curr->next->name, name) != 0) {
+        curr = curr->next;
+    }
+
+    if (curr->next != NULL) {
+        struct Node* temp = curr->next;
+        curr->next = curr->next->next;
+        free(temp);
     }
 }
 
-void print_list() {
-    struct Student *cur = head;
-    while (cur != NULL) {
-        printf("%s %d\n", cur->name, cur->score);
-        cur = cur->next;
+void print() {
+    struct Node* curr = head;
+    while (curr != NULL) {
+        printf("%s %d\n", curr->name, curr->score);
+        curr = curr->next;
     }
 }
 
 void quit() {
-    struct Student *cur = head;
-    while (cur != NULL) {
-        struct Student *tmp = cur;
-        cur = cur->next;
-        free(tmp);
+    struct Node* curr = head;
+    while (curr != NULL) {
+        struct Node* temp = curr;
+        curr = curr->next;
+        free(temp);
     }
     head = NULL;
 }
 
 int main() {
-    char cmd[16];
-    char name[64];
+    char command[20];
+    char name[100];
     int score;
 
     while (1) {
-        scanf("%s", cmd);
-        if (strcmp(cmd, "add") == 0) {
+        if (scanf("%s", command) != 1) {
+            break;
+        }
+
+        if (strcmp(command, "add") == 0) {
             scanf("%s %d", name, &score);
             add(name, score);
-        } else if (strcmp(cmd, "delete") == 0) {
+        } else if (strcmp(command, "delete") == 0) {
             scanf("%s", name);
-            delete(name);
-        } else if (strcmp(cmd, "print") == 0) {
-            print_list();
-        } else if (strcmp(cmd, "quit") == 0) {
+            delete_node(name);
+        } else if (strcmp(command, "print") == 0) {
+            print();
+        } else if (strcmp(command, "quit") == 0) {
             quit();
             break;
         }
     }
+
     return 0;
 }

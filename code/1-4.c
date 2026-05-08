@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
 
-struct IPv4{
+struct IPv4 {
     unsigned int version;
     unsigned int ihl;
     unsigned long long ttl;
@@ -10,28 +11,34 @@ struct IPv4{
     unsigned char data[1024];
 };
 
-void updata_val(struct IPv4 s){
-    sprintf(s.data, "updata_val");
+void update_val(struct IPv4 s) {
+    sprintf(s.data, "update_val");
 }
 
-void updata_ptr(struct IPv4* s){
-    sprintf(s->data, "updata_ptr");
+void update_ptr(struct IPv4 *s) {
+    sprintf(s->data, "update_ptr");
 }
 
 int main(){
     struct IPv4 s;
     clock_t start, finish;
     start = clock();
-    for (int i = 0; i < 1e7; i++){
-        updata_val(s);
+    
+    for (int i = 0; i < 1e7; i++) {
+        update_val(s);
     }
+
     finish = clock();
-    printf("%f\n", (double)(finish-start)/CLOCKS_PER_SEC);
+    printf("%f\n", (double) (finish - start) / CLOCKS_PER_SEC);
 
     start = clock();
-    for (int i = 0; i < 1e7; i++){
-        updata_ptr(&s);
+
+    for (int i = 0; i < 1e7; i++) {
+        update_ptr(&s);
     }
+
     finish = clock();
-    printf("%f\n", (double)(finish-start)/CLOCKS_PER_SEC);
+    printf("%f\n", (double) (finish - start) / CLOCKS_PER_SEC);
+
+    return 0;
 }
